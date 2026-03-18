@@ -1,10 +1,20 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
+import { CacheInterceptor } from '@nestjs/cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { logger } from './config/logger/Logger';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
+import { SwaggerModule } from '@nestjs/swagger';
+import { SwaggerConfig } from './config/swagger/Swagger';
+import { CommonResInterceptor } from './interceptors/commonRes.interceptor';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-   app.useGlobalPipes(
+  const app = await NestFactory.create(AppModule, { logger });
+  const configservice = app.get(ConfigService);
+  const appPort = configservice.get<number>("PORT") ?? 3000;
+
+  app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,       // remove extra fields automatically
       forbidNonWhitelisted: true, // throw error for unknown fields
@@ -12,8 +22,20 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: configservice.get<string>("FRONTEND_URL") || "http://localhost:5173",
   });
-  await app.listen(process.env.PORT ?? 3000);
+
+   app.useGlobalInterceptors(
+    new CacheInterceptor(app.get(CACHE_MANAGER), app.get(Reflector))
+  );
+
+  //Interceptors
+  app.useGlobalInterceptors(new CommonResInterceptor());
+
+  //Swagger
+  const document = SwaggerModule.createDocument(app, SwaggerConfig);
+  SwaggerModule.setup('api', app, document);
+
+  await app.listen(appPort);
 }
 bootstrap();
