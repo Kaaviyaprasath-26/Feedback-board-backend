@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
 import { FeedbackController } from './feedback.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Feedback, FeedbackSchema } from 'src/schema/feedback.schema';
+import { Feedback, FeedbackSchema } from 'src/schema/feedback/feedback.schema';
 
 @Module({
    imports: [
