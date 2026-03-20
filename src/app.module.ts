@@ -6,6 +6,8 @@ import { FeedbackModule } from './routes/feedback/feedback.module';
 import { ConfigModule } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongoDbConfig } from "./config/Database/MongoDB";
+import { LoginModule } from './routes/login/login.module';
+import { UserModule } from './routes/user/user.module';
 
 @Module({
   imports: [
@@ -21,7 +23,9 @@ import { MongoDbConfig } from "./config/Database/MongoDB";
     }),
 
     MongooseModule.forRootAsync(MongoDbConfig),
-    FeedbackModule
+    FeedbackModule,
+    LoginModule, 
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService],

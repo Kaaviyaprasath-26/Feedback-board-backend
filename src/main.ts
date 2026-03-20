@@ -1,7 +1,6 @@
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
+import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
-import { CacheInterceptor } from '@nestjs/cache-manager';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { logger } from './config/logger/Logger';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
@@ -26,11 +25,8 @@ async function bootstrap() {
   });
 
    app.useGlobalInterceptors(
-    new CacheInterceptor(app.get(CACHE_MANAGER), app.get(Reflector))
+    new CommonResInterceptor(),
   );
-
-  //Interceptors
-  app.useGlobalInterceptors(new CommonResInterceptor());
 
   //Swagger
   const document = SwaggerModule.createDocument(app, SwaggerConfig);

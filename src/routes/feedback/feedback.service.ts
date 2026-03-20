@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
-import { Feedback, FeedbackDocument } from 'src/schema/feedback.schema';
+import { Feedback, FeedbackDocument } from 'src/schema/feedback/feedback.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { FeedbackStatus } from 'src/enum/feedback/feedback';
