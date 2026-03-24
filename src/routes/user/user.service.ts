@@ -1,13 +1,12 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
-import * as bcrypt from "bcrypt";
 import { Model, Types } from 'mongoose';
 import { User, UserDocuments } from 'src/schema/user/user.schema';
 import { CreateUserDto } from './dto/user.dto';
 import { ValidateObjectId } from 'src/utils/validate-object-id.util';
 import { NotFoundException } from '@nestjs/common';
 import { UserCommenAggregation } from 'src/pipes/user/user-aggregation';
+import { BcryptPasswordHash } from 'src/utils/Bcrypt-password.util';
 
 @Injectable()
 export class UserService {
@@ -18,7 +17,7 @@ export class UserService {
 
 
     async AddUser(paylaod: CreateUserDto) {
-        const hashPassword = await bcrypt.hash(paylaod.password, 10);
+        const hashPassword = await BcryptPasswordHash(paylaod.password);
         const checkUser = await this.userModel.findOne({ email: paylaod.email });
 
         if (checkUser) {
